@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EPIC&reg; Weekly Workflow Checklist</title>
+    <link rel="stylesheet" href="/src/output.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <img class="logo" src="images/Carollo_Logo_Blue.png" alt="Carollo Logo">
+
+    <div class="container mx-auto p-4 md:p-8">
+
+        <header class="text-center mb-10">
+            <h1 class="text-4xl font-bold text-[#004369] mb-1">EPIC&reg; Weekly Task Checklist</h1>
+            <p class="text-lg text-[#01949A]">A Team Member Quick Reference Guide for Every Project Handoff</p>
+            <button type="reset" onclick="resetChecklist()" class="mt-3 text-sm text-[#DB1F48] hover:text-[#004369] font-medium border border-[#DB1F48] hover:border-[#004369] px-4 py-1 rounded-lg transition duration-200">Reset Checklist for New Week</button>
+        </header>
+
+        <div id="checklistContainer" class="space-y-4">
+            <!-- Checklist items will be populated here -->
+        </div>
+    </div>
+
+    <script>
+        const STEPS = [
+            {
+                id: '1',
+                phase: 'Step 1, Acquisition',
+                task: 'Get weekly assignments from the Team Lead.',
+                responsible: 'Team Member',
+                output: 'Assignment list received.'
+            },
+            {
+                id: '2',
+                phase: 'Step 2, Acquisition',
+                task: 'Review assignments and proactively reach out for markups if none received.',
+                responsible: 'Team Member',
+                output: 'Markups acquired or follow-up initiated.'
+            },
+            {
+                id: '3',
+                phase: 'Step 3, Prioritization',
+                task: 'Review return date and prioritize markups accordingly.',
+                responsible: 'Team Member',
+                output: 'Markups organized by urgency.'
+            },
+            {
+                id: '4',
+                phase: 'Step 4, Clarity Check (CRITICAL)',
+                task: 'Confirm understanding: Do I understand what is conveyed AND have all required files?',
+                responsible: 'Team Member',
+                output: 'YES: Proceed to step 6. NO: Contact Team Lead (Step 5).'
+            },
+            {
+                id: '5',
+                phase: 'Step 5, Communication',
+                task: 'If NO to Step 4, contact Team Lead for next steps.',
+                responsible: 'Team Lead / Team Member',
+                output: 'Resolution path defined.'
+            },
+            {
+                id: '6',
+                phase: 'Step 6, Communication',
+                task: 'Send email/Teams chat/Teams call to requester with questions/clarifications.',
+                responsible: 'Team Member',
+                output: 'Queries sent; waiting on response.'
+            },
+            {
+                id: '7',
+                phase: 'Step 7, Scheduling',
+                task: 'Inform requester of expected start time and estimated work duration.',
+                responsible: 'Team Member',
+                output: 'Requester informed.'
+            },
+            {
+                id: '8',
+                phase: 'Step 8, Scheduling',
+                task: 'Add projects with estimated times to your Outlook Calendar.',
+                responsible: 'Team Member',
+                output: 'Calendar blocked for focus time.'
+            },
+            {
+                id: '9',
+                phase: 'Step 9, Execution',
+                task: 'Work on markups.',
+                responsible: 'Team Member',
+                output: 'Markup edits complete.'
+            },
+            {
+                id: '10',
+                phase: 'Step 10, Quality Control',
+                task: 'Backcheck: Edited PDF must match markup received (use ONE yellow highlight for change, ONE additional highlight for check).',
+                responsible: 'Team Member',
+                output: 'Backcheck complete (2-Highlight Method).'
+            },
+            {
+                id: '11',
+                phase: 'Step 11, Quality Control',
+                task: 'Run a Reservoir QM.',
+                responsible: 'Team Member',
+                output: 'QM Report generated.'
+            },
+            {
+                id: '12',
+                phase: 'Step 12, Quality Control',
+                task: 'Pick up any comments from backchecks/Reservoir QM.',
+                responsible: 'Team Member',
+                output: 'All internal QC errors resolved.'
+            },
+            {
+                id: '13',
+                phase: 'Step 13, Delivery',
+                task: 'Send final email to engineer/requester with fully QC\'d PDF links/attachments (must be error-free).',
+                responsible: 'Team Member',
+                output: 'Project closed.'
+            },
+        ];
+
+        function loadChecklist() {
+            const checklistContainer = document.getElementById('checklistContainer');
+            const savedState = JSON.parse(localStorage.getItem('workflowChecklistState')) || {};
+            
+            checklistContainer.innerHTML = '';
+            
+            STEPS.forEach(step => {
+                const isChecked = savedState[step.id] || false;
+                const responsibleClass = step.responsible.includes('Team Member') ? 'responsible-tm' : 'responsible-eng';
+
+                const html = `
+                    <label for="step-${step.id}" class="step-card flex items-center p-4 shadow-md rounded-lg cursor-pointer">
+                        <input type="checkbox" id="step-${step.id}" class="h-6 w-6 text-[#01949A] border-gray-300 rounded focus:ring-[#01949A] transition duration-150" ${isChecked ? 'checked' : ''} onchange="saveChecklistState('${step.id}', this.checked)">
+                        <div class="ml-4 flex-1">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-xs font-semibold uppercase text-gray-500">${step.phase}</span>
+                                <span class="text-xs font-bold px-2 py-0.5 rounded-full ${responsibleClass}">${step.responsible}</span>
+                            </div>
+                            <p class="task-description text-base font-semibold text-gray-800 transition duration-300">${step.task}</p>
+                            <p class="text-xs text-gray-400 mt-1">Output: ${step.output}</p>
+                        </div>
+                    </label>
+                `;
+                checklistContainer.innerHTML += html;
+            });
+        }
+
+        function saveChecklistState(id, isChecked) {
+            const savedState = JSON.parse(localStorage.getItem('workflowChecklistState')) || {};
+            savedState[id] = isChecked;
+            localStorage.setItem('workflowChecklistState', JSON.stringify(savedState));
+        }
+
+        function resetChecklist() {
+            localStorage.removeItem('workflowChecklistState');
+            loadChecklist();
+        }
+
+        // Initialize the checklist on load
+        loadChecklist();
+    </script>
+
+</body>
+</html>

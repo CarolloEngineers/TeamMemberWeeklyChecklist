@@ -1,0 +1,25 @@
+/* 1. Tailwind Directives */
+@import "tailwindcss";
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #E5DDC8; /* Base background from the vibrant palette */
+        }
+        .container {
+            max-width: 960px;
+        }
+        .step-card {
+            background-color: #ffffff;
+            border-left: 5px solid #004369; /* Primary Blue accent */
+            transition: all 0.2s;
+        }
+        .step-card:has(input:checked) {
+            border-left: 5px solid #01949A; /* Green accent when checked */
+            opacity: 0.85;
+        }
+        .step-card:has(input:checked) .task-description {
+            text-decoration: line-through;
+            color: #DB1F48;
+        }
+        .responsible-tm { background-color: #F8B229; color: #004369; } /* Yellow accent for Team Member */
+        .responsible-eng { background-color: #DB1F48; color: #E5DDC8; } /* Red accent for Engineer/Lead */
